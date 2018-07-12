@@ -1,0 +1,31 @@
+{
+  "name": "@mironal/issue-lint",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc --watch",
+    "build": "tsc",
+    "test": "jest",
+    "_fmt": "prettier --config .prettierrc '{*,src/**/*}.{js,jsx,css,ts,tsx,json}'",
+    "_lint": "tslint -p ./tsconfig.json -c ./tslint.json 'src/**/*.{ts,tsx}' ${LINT_OUTPUT_OPTION}",
+    "lint": "npm run _fmt && npm run _lint",
+    "fmt": "npm run _fmt -- --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mironal/github-token-store": "1.0.0",
+    "@octokit/rest": "15.9.4",
+    "chalk": "2.4.1",
+    "inquirer": "6.0.0",
+    "prettier": "1.13.7"
+  },
+  "devDependencies": {
+    "@types/inquirer": "0.0.42",
+    "tslint": "5.10.0",
+    "tslint-config-prettier": "1.13.0",
+    "typescript": "2.9.2"
+  }
+}
