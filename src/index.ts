@@ -6,8 +6,8 @@ import GitHub from "@octokit/rest"
 
 import L from "./logger"
 import { Issue } from "./issue"
-import rules, { prettyString } from "./rules"
-import { Violation } from "./rules/types"
+import rules from "./rules"
+import { Report } from "./rules/types"
 
 const store = new GitHubTokenStore(
   PATH.join(OS.homedir(), ".config/issue-lint/github"),
@@ -86,10 +86,7 @@ const repoParamFromArgv = async () => {
 const flatMap = <A, B>(a: A[], f: (a: A) => B[]) =>
   a.map(f).reduce((xs, ys) => [...xs, ...ys], [])
 
-const runLint = async (
-  owner: string,
-  repo: string,
-): Promise<{ violations: Violation[]; issues: Issue[] }> => {
+const runLint = async (owner: string, repo: string): Promise<Report[]> => {
   L.debug("Loading auth token...")
 
   const token = await store.readToken()
@@ -112,10 +109,10 @@ const runLint = async (
     })
     .then(resp => (resp.data as Issue[]).filter(i => !i.pull_request))
     .then(issues =>
-      Promise.resolve({
-        issues,
-        violations: flatMap(issues, i => flatMap(rules, r => r.validate(i))),
-      }),
+      issues.map(issue => ({
+        issue,
+        violations: flatMap(rules, r => r.validate(issue)),
+      })),
     )
 }
 
@@ -145,21 +142,21 @@ if (
 
   paramFn()
     .then(({ owner, repo }) => runLint(owner, repo))
-    .then(({ violations, issues }) => {
-      if (violations.length > 0) {
+    .then(reports => {
+      const hasViolation = reports.filter(r => r.violations.length > 0)
+
+      if (hasViolation.length > 0) {
         process.exitCode = -2
-        violations.forEach(v => {
-          const pretty = prettyString(v)
-          if (v.severity === "warning") {
-            L.warn(pretty)
-          } else if (v.severity === "error") {
-            L.error(pretty)
-          }
-        })
+
+        L.prettyReports(reports)
         L.nl()
       }
       L.info(
-        `${violations.length} violation(s) found in ${issues.length} issue(s).`,
+        `${hasViolation
+          .map(v => v.violations.length)
+          .reduce((sum, n) => sum + n, 0)} violation(s) found in ${
+          reports.length
+        } issue(s).`,
       )
     })
     .catch(error => {

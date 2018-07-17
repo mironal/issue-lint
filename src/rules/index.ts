@@ -1,4 +1,4 @@
-import { Rule, Violation } from "./types"
+import { Rule } from "./types"
 import BodyLength from "./body_length"
 import TODO from "./todo"
 
@@ -22,11 +22,3 @@ rules.forEach(r => {
 })
 
 export default rules
-
-export const prettyString = (violation: Violation): string =>
-  `${violation.rule.meta.name} violation: ${violation.reason}
-  - "${violation.issue.title}" #${violation.issue.number}
-  - Auther: @${violation.issue.user.login}
-  - Assignees: ${violation.issue.assignees.map(a => `@${a.login}`).join(", ") ||
-    "None"}
-  - URL: ${violation.issue.html_url}`

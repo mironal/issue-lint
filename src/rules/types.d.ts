@@ -5,9 +5,14 @@ export type ViolationSeverity = "warning" | "error"
 export interface Violation {
   severity: ViolationSeverity
   rule: Rule
-  issue: Issue
   reason: string
 }
+
+export interface Report {
+  issue: Issue
+  violations: Violation[]
+}
+
 export interface RuleMeta {
   identifier: string
   name: string

@@ -18,8 +18,7 @@ const rule: Rule = {
     return [
       {
         rule,
-        issue,
-        severity: "error",
+        severity: "warning",
         reason: `The body of an issue must have "- [] " style TODO.`,
       },
     ]

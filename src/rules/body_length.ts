@@ -21,7 +21,6 @@ const rule: Rule = {
           rule,
           severity: "error",
           reason: `The body of an issue must be at least ${MIN_LINES} lines.`,
-          issue,
         },
       ]
     }

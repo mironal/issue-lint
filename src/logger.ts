@@ -1,4 +1,6 @@
 import chalk from "chalk"
+import { Report } from "./rules/types"
+import terminalLink from "terminal-link"
 
 const cl = console
 
@@ -50,6 +52,28 @@ export const Logger = (
     if (logLevel <= LOG_LEVEL.Disable) {
       cl.info(chalk.greenBright(`[${prefix}]`), ...[message, ...optionalParams])
     }
+  },
+  prettyReports: (reports: Report[]): void => {
+    reports.forEach(report => {
+      cl.info(
+        `${terminalLink(
+          `${report.issue.title} #${report.issue.number}`,
+          report.issue.html_url,
+        )}`,
+      )
+      report.violations.forEach(v => {
+        const msg = `${v.rule.meta.name} violation ${chalk.gray(
+          `(${v.rule.meta.identifier})`,
+        )}: ${v.reason}`
+
+        const severity =
+          v.severity === "error"
+            ? chalk.redBright("error")
+            : chalk.yellowBright("warn")
+
+        cl.error(`  ${severity}: ${msg}`)
+      })
+    })
   },
 })
 

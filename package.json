@@ -20,7 +20,8 @@
     "@octokit/rest": "15.9.4",
     "chalk": "2.4.1",
     "inquirer": "6.0.0",
-    "prettier": "1.13.7"
+    "prettier": "1.13.7",
+    "terminal-link": "1.1.0"
   },
   "devDependencies": {
     "@types/inquirer": "0.0.42",
